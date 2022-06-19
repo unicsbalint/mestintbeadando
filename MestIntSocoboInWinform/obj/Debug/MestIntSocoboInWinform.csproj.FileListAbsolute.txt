@@ -1,0 +1,10 @@
+C:\Users\Balint\source\repos\MestIntSocoboInWinform\MestIntSocoboInWinform\bin\Debug\MestIntSocoboInWinform.exe.config
+C:\Users\Balint\source\repos\MestIntSocoboInWinform\MestIntSocoboInWinform\bin\Debug\MestIntSocoboInWinform.exe
+C:\Users\Balint\source\repos\MestIntSocoboInWinform\MestIntSocoboInWinform\bin\Debug\MestIntSocoboInWinform.pdb
+C:\Users\Balint\source\repos\MestIntSocoboInWinform\MestIntSocoboInWinform\obj\Debug\MestIntSocoboInWinform.csprojAssemblyReference.cache
+C:\Users\Balint\source\repos\MestIntSocoboInWinform\MestIntSocoboInWinform\obj\Debug\MestIntSocoboInWinform.Form1.resources
+C:\Users\Balint\source\repos\MestIntSocoboInWinform\MestIntSocoboInWinform\obj\Debug\MestIntSocoboInWinform.Properties.Resources.resources
+C:\Users\Balint\source\repos\MestIntSocoboInWinform\MestIntSocoboInWinform\obj\Debug\MestIntSocoboInWinform.csproj.GenerateResource.cache
+C:\Users\Balint\source\repos\MestIntSocoboInWinform\MestIntSocoboInWinform\obj\Debug\MestIntSocoboInWinform.csproj.CoreCompileInputs.cache
+C:\Users\Balint\source\repos\MestIntSocoboInWinform\MestIntSocoboInWinform\obj\Debug\MestIntSocoboInWinform.exe
+C:\Users\Balint\source\repos\MestIntSocoboInWinform\MestIntSocoboInWinform\obj\Debug\MestIntSocoboInWinform.pdb
