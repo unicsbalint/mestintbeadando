@@ -8,6 +8,7 @@ namespace MestIntSocoboInWinform.GameState
 {
     interface StateSpace
     { 
-        bool isItGameOver();
+        bool IsItTargetState();
+        void UpdateState(PlayerMovement.MovementTypes mvType);
     }
 }

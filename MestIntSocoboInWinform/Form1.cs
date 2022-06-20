@@ -15,22 +15,36 @@ namespace MestIntSocoboInWinform
 {
     public partial class Form1 : Form
     {
+        public static bool renderTextures = true;
+        // Singleton state
         private State state = State.GetInstance();
+        Random rnd = new Random();
         public Form1()
         {
             InitializeComponent();
-            this.DoubleBuffered = true;
-            this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-            this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            this.UpdateStyles();
+            // UI beállítása
             updateGamePanel(state.GetState());
+            // A következő lépési lehetőségek betöltése az AI számára
+            state.updateNextMoves();
+            // Stacknek megadni a kezdőállapotot
+            state.stack.Push(state.currentState);
+
+            SetWinningCoordinatesText();
         }
 
-       
-    
+        // Ez a Double Buffering miatt van, de ez sem működik jól, ugyan úgy villog a kép.
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams handleParam = base.CreateParams;
+                handleParam.ExStyle |= 0x02000000;   // WS_EX_COMPOSITED       
+                return handleParam;
+            }
+        }
+
         private void updateGamePanel(string[,] state)
         {
-
             for (int i = 0; i < state.GetLength(0); i++)
             {
                 for (int j = 0; j < state.GetLength(1); j++)
@@ -42,6 +56,7 @@ namespace MestIntSocoboInWinform
 
         private void RenderUIElements(int row, int col, string structure)
         {
+
             switch (structure)
             {
                 case "w":
@@ -68,14 +83,6 @@ namespace MestIntSocoboInWinform
                         gamePanel.SetRow(obstacleUI, row);
                         gamePanel.SetColumn(obstacleUI, col);
                         break;
-                case "g":
-                        Goal goal = new Goal();
-                        Control goalUI = goal.GetGoal();
-                        this.Controls.Add(goalUI);
-                        gamePanel.Controls.Add(goalUI);
-                        gamePanel.SetRow(goalUI, row);
-                        gamePanel.SetColumn(goalUI, col);
-                        break;
                 case "p":
                         Player player = new Player();
                         Control playerUI = player.GetPlayer();
@@ -83,6 +90,14 @@ namespace MestIntSocoboInWinform
                         gamePanel.Controls.Add(playerUI);
                         gamePanel.SetRow(playerUI, row);
                         gamePanel.SetColumn(playerUI, col);
+                        break;
+                case "g":
+                        Goal goal = new Goal();
+                        Control goalUI = goal.GetGoal();
+                        this.Controls.Add(goalUI);
+                        gamePanel.Controls.Add(goalUI);
+                        gamePanel.SetRow(goalUI, row);
+                        gamePanel.SetColumn(goalUI, col);
                         break;
                 default:
                     break;
@@ -98,41 +113,113 @@ namespace MestIntSocoboInWinform
                 gamePanel.Controls.Clear();
                 state.UpdateState(MovementTypes.RIGHT);
                 updateGamePanel(state.GetState());
-                checkIfGameIsOver();
+                GameOver();
             }
             else if (e.KeyCode == Keys.Left)
             {
                 gamePanel.Controls.Clear();
                 state.UpdateState(MovementTypes.LEFT);
                 updateGamePanel(state.GetState());
-                checkIfGameIsOver();
+                GameOver();
             }
             else if (e.KeyCode == Keys.Up)
             {
                 gamePanel.Controls.Clear();
                 state.UpdateState(MovementTypes.UP);
                 updateGamePanel(state.GetState());
-                checkIfGameIsOver();
+                GameOver();
             }
             else if(e.KeyCode == Keys.Down)
             {
                 gamePanel.Controls.Clear();
                 state.UpdateState(MovementTypes.DOWN);
                 updateGamePanel(state.GetState());
-                checkIfGameIsOver();
+                GameOver();
+            }
+            else if(e.KeyCode == Keys.Space)
+            {
+                Backtrack();
+            }
+            else if(e.KeyCode == Keys.Q)
+            {
+                gamePanel.Controls.Clear();
+                state.LoadDefaultState();
+                updateGamePanel(state.currentState);
+            }
+            else if(e.KeyCode == Keys.T)
+            {
+                Form1.renderTextures = !Form1.renderTextures;
+                gamePanel.Controls.Clear();
+                updateGamePanel(state.GetState());
             }
 
         }
 
-        public void checkIfGameIsOver()
+        public void GameOver()
         {
             if (state.IsItTargetState())
             {
                 MessageBox.Show("Gratulálunk! Nyertél!");
                 gamePanel.Controls.Clear();
-                state.LoadDefaultState();
                 updateGamePanel(state.GetState());
             }
         }
+
+        // Mélységi határos.
+        public void Backtrack()
+        {
+            while (state.stack.Count > 0 && !state.IsItTargetState())
+            {
+                // A mostani állapotból lévő következő lépési lehetőségek állapotai
+                state.updateNextMoves();
+                // Meg van már a kezdőállapot a stackbe? Ha igen felveszem a jelenlegit
+                if (state.stack.Count >= 1)
+                {
+                    state.stack.Push(state.currentState);
+                }
+                // Ellépek az egyik irányba.
+                state.currentState = state.nextMoves[rnd.Next(0, 4)];
+
+                // Rosszul léptem?
+                if (state.IsStepBackNeeded())           
+                {
+                    // Ha igen, visszalépek az előző állapotba.
+                    state.currentState = state.stack.Peek();
+                    state.stack.Pop();
+                }
+
+                // Ha a stack túl mélyre megy, a feladatot az AI valószínű nem tudja megoldani.
+                if (state.stack.Count >= 1000000)
+                {
+                    state.stack.Clear();
+                    MessageBox.Show("Az AI nem tudta megoldani a feladatot.");
+                    return;
+                }
+
+                // Amennyiben elértem a cél állapotot GameOver
+                if (state.IsItTargetState())
+                {
+                    GameOver();
+                    break;
+                }
+            }
+        }
+
+        public void SetWinningCoordinatesText()
+        {
+            string coordinates = "Mozgasd a diplomákat a következő koordinátákra:";
+            for (int i = 0; i < state.currentState.GetLength(0); i++)
+            {
+                for (int j = 0; j < state.currentState.GetLength(0); j++)
+                {
+                    if (state.currentState[i,j] == "g")
+                    {
+                        coordinates += string.Format("({0},{1})", i, j);
+                    }
+                }
+            }
+            goalCoordinates.Text = coordinates;
+        }
+
     }
 }

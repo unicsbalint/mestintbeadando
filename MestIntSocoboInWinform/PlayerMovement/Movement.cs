@@ -17,16 +17,17 @@ namespace MestIntSocoboInWinform.PlayerMovement
             {
                 for (int j = 0; j < state.GetLength(1); j++) // oszlop
                 {
-                    if (state[i, j] == "p" && hm.CanPlayerMove(state[i, j + -1]))
+                    // Megnézzük tud-e mozogni a plyer balra (i, j-1)
+                    if (state[i, j] == "p" && hm.CanPlayerMove(state[i, j-1]))
                     {
                         if (hm.isThereObstacleInWay(state[i, j - 1]))
                         {
-                            Console.WriteLine("obstacle van az útban");
                             // Ha w marad akkor fal van ott, vagy kimentünk volna a pályáról.
                             string wallCheck = "w";
                             try { wallCheck = state[i, j - 2]; } catch (Exception) { }
                             if (hm.CanObstacleBePushed(wallCheck))
                             {
+                                // 
                                 state[i, j] = state[i, j - 2];
                                 state[i, j - 1] = "p";
                                 state[i, j - 2] = "o";
@@ -56,7 +57,6 @@ namespace MestIntSocoboInWinform.PlayerMovement
                     {
                         if (hm.isThereObstacleInWay(state[i,j+1]))
                         {
-                            Console.WriteLine("obstacle van az útban");
                             // Ha w marad akkor fal van ott, vagy kimentünk volna a pályáról.
                             string wallCheck = "w";
                             try { wallCheck = state[i, j + 2];  } catch (Exception) { }
@@ -105,7 +105,6 @@ namespace MestIntSocoboInWinform.PlayerMovement
                         }
                         else
                         {
-                            Console.WriteLine("Nincsen izém");
                             state[i, j] = state[i - 1, j];
                             state[i - 1, j] = "p";
                             break;
@@ -149,6 +148,59 @@ namespace MestIntSocoboInWinform.PlayerMovement
                 }
             }
 
+        }
+
+
+        public static List<string[,]> GetNextMoves(string[,] state)
+        {
+            List<string[,]> nextMoves = new List<string[,]>();
+
+            string[,] rightMove = new string[state.GetLength(0), state.GetLength(1)];
+            for (int i = 0; i < state.GetLength(0); i++)
+            {
+                for (int j = 0; j < state.GetLength(1); j++)
+                {
+                    rightMove[i, j] = state[i, j];
+                }
+            }
+            Movement.MoveRight(ref rightMove);
+            nextMoves.Add(rightMove);
+
+
+            string[,] leftMove = new string[state.GetLength(0), state.GetLength(1)];
+            for (int i = 0; i < state.GetLength(0); i++)
+            {
+                for (int j = 0; j < state.GetLength(1); j++)
+                {
+                    leftMove[i, j] = state[i, j];
+                }
+            }
+            Movement.MoveLeft(ref leftMove);
+            nextMoves.Add(leftMove);
+
+            string[,] upMove = new string[state.GetLength(0), state.GetLength(1)];
+            for (int i = 0; i < state.GetLength(0); i++)
+            {
+                for (int j = 0; j < state.GetLength(1); j++)
+                {
+                    upMove[i, j] = state[i, j];
+                }
+            }
+            Movement.MoveUp(ref upMove);
+            nextMoves.Add(upMove);
+
+            string[,] downMove = new string[state.GetLength(0), state.GetLength(1)];
+            for (int i = 0; i < state.GetLength(0); i++)
+            {
+                for (int j = 0; j < state.GetLength(1); j++)
+                {
+                    downMove[i, j] = state[i, j];
+                }
+            }
+            Movement.MoveDown(ref downMove);
+            nextMoves.Add(downMove);
+
+            return nextMoves;
         }
 
 

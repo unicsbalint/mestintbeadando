@@ -14,7 +14,11 @@ namespace MestIntSocoboInWinform.Structures
         {
             PictureBox wall = new System.Windows.Forms.PictureBox();
             wall.Size = new System.Drawing.Size(100, 100);
-            wall.ImageLocation = @"textures\wall.png";
+            if (Form1.renderTextures)
+            {
+                wall.ImageLocation = @"textures\wall.png";
+            }
+            wall.BackColor = Color.Gray;
             wall.Dock = DockStyle.Fill;
             wall.Margin = Padding.Empty;
             return wall;

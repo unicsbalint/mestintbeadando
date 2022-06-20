@@ -14,7 +14,11 @@ namespace MestIntSocoboInWinform.Structures
         {
             PictureBox goal = new System.Windows.Forms.PictureBox();
             goal.Size = new System.Drawing.Size(100, 100);
-            goal.ImageLocation = @"textures\floor.jpg";
+            if (Form1.renderTextures)
+            {
+                goal.ImageLocation = @"textures\floor.png";
+            }
+            goal.BackColor = Color.White;
             goal.Dock = DockStyle.Fill;
             goal.Margin = Padding.Empty;
             return goal;

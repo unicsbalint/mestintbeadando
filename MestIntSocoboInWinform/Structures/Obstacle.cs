@@ -12,12 +12,16 @@ namespace MestIntSocoboInWinform.Structures
     {
         public Control GetObstacle()
         {
-            PictureBox wall = new System.Windows.Forms.PictureBox();
-            wall.Size = new System.Drawing.Size(100, 100);
-            wall.ImageLocation = @"textures\obstacle.jpg";
-            wall.Dock = DockStyle.Fill;
-            wall.Margin = Padding.Empty;
-            return wall;
+            PictureBox obstacle = new System.Windows.Forms.PictureBox();
+            obstacle.Size = new System.Drawing.Size(100, 100);
+            if (Form1.renderTextures)
+            {
+                obstacle.ImageLocation = @"textures\obstacle.png";
+            }
+            obstacle.Dock = DockStyle.Fill;
+            obstacle.Margin = Padding.Empty;
+            obstacle.BackColor = Color.Gold;
+            return obstacle;
         }
     }
 }

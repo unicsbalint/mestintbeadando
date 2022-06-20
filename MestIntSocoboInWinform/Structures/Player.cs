@@ -14,9 +14,13 @@ namespace MestIntSocoboInWinform.Structures
         {
             PictureBox player = new System.Windows.Forms.PictureBox();
             player.Size = new System.Drawing.Size(100, 100);
-            player.ImageLocation = @"textures\player.png";
+            if (Form1.renderTextures)
+            {
+                player.ImageLocation = @"textures\player.png";
+            }
             player.Dock = DockStyle.Fill;
             player.Margin = Padding.Empty;
+            player.BackColor = Color.Black;
             return player;
         }
     }

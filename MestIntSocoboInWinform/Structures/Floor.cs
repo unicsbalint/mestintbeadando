@@ -12,12 +12,17 @@ namespace MestIntSocoboInWinform.Structures
     {
         public Control GetFloor()
         {
-            PictureBox wall = new System.Windows.Forms.PictureBox();
-            wall.Size = new System.Drawing.Size(100, 100);
-            wall.ImageLocation = @"textures\floor.jpg";
-            wall.Dock = DockStyle.Fill;
-            wall.Margin = Padding.Empty;
-            return wall;
+            
+            PictureBox floor = new System.Windows.Forms.PictureBox();
+            floor.Size = new System.Drawing.Size(100, 100);
+            if (Form1.renderTextures)
+            {
+                floor.ImageLocation = @"textures\floor.png";
+            }
+            floor.BackColor = Color.White;
+            floor.Dock = DockStyle.Fill;
+            floor.Margin = Padding.Empty;
+            return floor;
         }
     }
 }
