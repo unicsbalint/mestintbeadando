@@ -16,9 +16,7 @@ namespace MestIntSocoboInWinform
     public partial class Form1 : Form
     {
         public static bool renderTextures = true;
-        // Singleton state
         private State state = State.GetInstance();
-        Random rnd = new Random();
         public Form1()
         {
             InitializeComponent();
@@ -165,36 +163,29 @@ namespace MestIntSocoboInWinform
             }
         }
 
-        // Mélységi határos.
+        string[,] noMoreOperatorCanBeUsed = new string[0, 0];
+        // Mélység határos. no-go backtrack
         public void Backtrack()
         {
+            int depthLimit = 250;
+            List<string[,]> noGo = new List<string[,]>();
+
+            // Ha van olyan állapota az aktuális játéktérnek ami már visszalépést követelne, az állapot nem megoldható.
+            if(state.IsStepBackNeeded())
+            {
+                MessageBox.Show("Nem megoldható feladat.");
+                return;
+            }
             while (state.stack.Count > 0 && !state.IsItTargetState())
             {
-                // A mostani állapotból lévő következő lépési lehetőségek állapotai
-                state.updateNextMoves();
-                // Meg van már a kezdőállapot a stackbe? Ha igen felveszem a jelenlegit
-                if (state.stack.Count >= 1)
-                {
-                    state.stack.Push(state.currentState);
-                }
+                // "mentem" az állapotot.
+                state.stack.Push(state.currentState);
+                
                 // Ellépek az egyik irányba.
-                state.currentState = state.nextMoves[rnd.Next(0, 4)];
+                state.currentState = state.GetNextMove(noGo);
 
-                // Rosszul léptem?
-                if (state.IsStepBackNeeded())           
-                {
-                    // Ha igen, visszalépek az előző állapotba.
-                    state.currentState = state.stack.Peek();
-                    state.stack.Pop();
-                }
-
-                // Ha a stack túl mélyre megy, a feladatot az AI valószínű nem tudja megoldani.
-                if (state.stack.Count >= 1000000)
-                {
-                    state.stack.Clear();
-                    MessageBox.Show("Az AI nem tudta megoldani a feladatot.");
-                    return;
-                }
+                // [0,0]-t ad vissza, akkor az adott csúcsból nem tudunk már sehova lépni, vissza kell menni.
+                if (state.currentState == noMoreOperatorCanBeUsed) state.stack.Pop();
 
                 // Amennyiben elértem a cél állapotot GameOver
                 if (state.IsItTargetState())
@@ -202,8 +193,27 @@ namespace MestIntSocoboInWinform
                     GameOver();
                     break;
                 }
+
+                // Rosszul léptem?
+                if (state.IsStepBackNeeded())           
+                {
+                    // Ha vissza kellett lépnem akkor az egy no-go állapot
+                    noGo.Add(state.currentState);
+                    // Ha rosszul léptem, visszalépek az előző állapotba.
+                    state.currentState = state.stack.Peek();
+                    //És a stacket is vissza állítom
+                    state.stack.Pop();
+                }
+
+                // Ha a stack túl mélyre megy, a feladatot az AI valószínű nem tudja megoldani.
+                if (state.stack.Count >= depthLimit)
+                {
+                    state.stack.Pop();
+                }
             }
         }
+
+      
 
         public void SetWinningCoordinatesText()
         {

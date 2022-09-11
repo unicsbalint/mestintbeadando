@@ -10,7 +10,10 @@ namespace MestIntSocoboInWinform.PlayerMovement
     {
         private static HorizontalMovement hm = new HorizontalMovement();
         private static VerticalMovement vm = new VerticalMovement();
-
+        // Alap ötletem:
+        // a p object tud mozogni? nem megy neki a falnak? movement.CanPlayerMove
+        // van előtte akadály? ha nincs akkor lépek
+        // ha van előtte lehet tolni? CanObstacleBePushed, ha igen lehet mozgatni.
         public static void MoveLeft(ref string[,] state)
         {
             for (int i = 0; i < state.GetLength(0); i++) // sor
@@ -81,6 +84,7 @@ namespace MestIntSocoboInWinform.PlayerMovement
             
         }
 
+        // a CanPlayerMove az előfeltételünk, IsThereObstacleInWay, CanObstacleBePushed további speciális feltételek.
         public static void MoveUp(ref string[,] state)
         {
 
@@ -151,6 +155,7 @@ namespace MestIntSocoboInWinform.PlayerMovement
         }
 
 
+        // Letároljuk az összes következő lépés állapotát.
         public static List<string[,]> GetNextMoves(string[,] state)
         {
             List<string[,]> nextMoves = new List<string[,]>();

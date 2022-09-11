@@ -9,6 +9,8 @@ namespace MestIntSocoboInWinform.GameState
 {
     class State : StateSpace
     {
+        static Random rnd = new Random();
+
         private State() { }
         private static State state;
 
@@ -21,11 +23,11 @@ namespace MestIntSocoboInWinform.GameState
         private static readonly string[,] startingState =  {
                 { "w","w","w","w","w","w","w","w","w" },
                 { "w","p","f","f","f","f","f","f","w" },
-                { "w","f","o","o","f","f","f","f","w" },
-                { "w","f","o","f","f","f","f","f","w" },
+                { "w","f","o","f","f","f","g","f","w" },
                 { "w","f","f","f","g","f","f","f","w" },
                 { "w","f","f","f","f","f","f","f","w" },
-                { "w","f","f","g","f","g","f","f","w" },
+                { "w","f","f","f","o","f","f","f","w" },
+                { "w","f","g","f","f","f","o","f","w" },
                 { "w","f","f","f","f","f","f","f","w" },
                 { "w","w","w","w","w","w","w","w","w" }
         };
@@ -38,7 +40,6 @@ namespace MestIntSocoboInWinform.GameState
             if (state == null)
             {
                 state = new State();
-                // Kezdőállapot beállítása a "konstruktorban"
                 state.currentState = startingState;
                 state.updateNextMoves();
             }
@@ -52,8 +53,28 @@ namespace MestIntSocoboInWinform.GameState
             nextMoves = Movement.GetNextMoves(currentState);
         }
 
+        public string[,] GetNextMove(List<string[,]> noGo)
+        {
+            // A mostani állapotból lévő következő lépési lehetőségek állapotainak beállítása
+            state.updateNextMoves();
 
-        // Szuper operátor
+            string[,] nextStep = nextMoves[rnd.Next(0, 4)];
+
+            // Ha a lépés amit adnánk egy no-go akkor megváltoztatjuk.
+            int i = 0;
+            while (noGo.Contains(nextStep))
+            {
+                try
+                {
+                    nextStep = nextMoves[i];
+                }
+                // Így jelzem ha már minden operátort kipróbáltam. 
+                catch (Exception) { nextStep = new string[0, 0]; }
+                i++;
+            }
+            return nextStep;
+        }
+
         public void UpdateState(MovementTypes mt)
         {
             switch (mt)
@@ -113,6 +134,7 @@ namespace MestIntSocoboInWinform.GameState
             state.currentState = startingState;
         }
 
+        // Állapot -e? POST
         public bool IsStepBackNeeded()
         {
             bool result = false;
